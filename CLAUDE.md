@@ -49,7 +49,7 @@ Extracted per facility: roster_date, town, county, zip_code, facility_name, addr
 
 ## Automated Monthly Updates
 
-A GitHub Actions workflow (`.github/workflows/update-roster.yml`) runs on the 15th of each month to:
+A GitHub Actions workflow (`.github/workflows/update-roster.yml`) runs on the 16th of each month to:
 1. Download the latest PDF from Nebraska DHHS
 2. Save it to `pdfs/alf_roster_YYYY-MM-DD.pdf`
 3. Parse and export to `data/alf_roster_YYYY-MM-DD.csv`

@@ -2,8 +2,8 @@ name: Update ALF Roster
 
 on:
   schedule:
-    # Run at noon UTC on the 15th of each month
-    - cron: '0 12 15 * *'
+    # Run at noon UTC on the 16th of each month (data updates on 15th)
+    - cron: '0 12 16 * *'
   workflow_dispatch:
     # Allow manual trigger
 
