@@ -1,0 +1,52 @@
+name: Update ALF Roster
+
+on:
+  schedule:
+    # Run at noon UTC on the 15th of each month
+    - cron: '0 12 15 * *'
+  workflow_dispatch:
+    # Allow manual trigger
+
+jobs:
+  update-roster:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pdfplumber
+
+      - name: Set date variable
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Download ALF Roster PDF
+        run: |
+          curl -L -o "pdfs/alf_roster_${{ steps.date.outputs.date }}.pdf" \
+            "https://dhhs.ne.gov/licensure/Documents/ALF%20Roster.pdf"
+
+      - name: Extract data from PDF
+        run: |
+          python extract_alf_roster.py \
+            "pdfs/alf_roster_${{ steps.date.outputs.date }}.pdf" \
+            -o "data/alf_roster_${{ steps.date.outputs.date }}.csv" \
+            --date "${{ steps.date.outputs.date }}"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pdfs/ data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update ALF roster for ${{ steps.date.outputs.date }}"
+            git push
+          fi
