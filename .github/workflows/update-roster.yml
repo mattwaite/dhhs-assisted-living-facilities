@@ -24,7 +24,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pdfplumber
+        run: pip install pdfplumber pytest
 
       - name: Set date variable
         id: date
@@ -41,6 +41,12 @@ jobs:
             "pdfs/alf_roster_${{ steps.date.outputs.date }}.pdf" \
             -o "data/alf_roster_${{ steps.date.outputs.date }}.csv" \
             --date "${{ steps.date.outputs.date }}"
+
+      - name: Run tests to validate extracted data
+        run: |
+          # Copy downloaded PDF to expected test location
+          cp "pdfs/alf_roster_${{ steps.date.outputs.date }}.pdf" "ALF Roster.pdf"
+          pytest test_extract_alf_roster.py -v
 
       - name: Commit and push changes
         run: |
